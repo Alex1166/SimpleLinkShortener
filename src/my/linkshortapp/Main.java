@@ -5,8 +5,6 @@ package my.linkshortapp;
 public class Main {
     public static void main(String[] args) {
 
-        LinkShortHelper lsh = new LinkShortHelper();
-
         while (true) {
             System.out.println("type 'shorten <URL>' to shorten link");
             System.out.println("type 'get <URL>' to get full link");
@@ -18,9 +16,9 @@ public class Main {
                 return;
             } else {
                 if (s.startsWith("shorten ")) {
-                    lsh.shortenLink(s.split(" ")[1]);
+                    System.out.println(LinkShortHelper.shortenLink(s.split(" ")[1]));
                 } else if (s.startsWith("get ")) {
-                    lsh.getFullLink(s.split(" ")[1]);
+                    System.out.println(LinkShortHelper.getFullLink(s.split(" ")[1]));
                 }
             }
         }

@@ -7,47 +7,25 @@ public class LinkShortHelper {
     private static final Map<String, String> db = new HashMap<>();
     private static final String base = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 
-    public void shortenLink(String link) {
-        String shortLink = "http://foo.bar/" + generateHash(db.size() + 1);
+    public static String shortenLink(String link) {
+        String shortLink = "http://foo.bar/" + generateLink(db.size() + 1);
 
         db.put(shortLink, link);
-        System.out.println(shortLink);
+
+        return shortLink;
     }
 
-    public static String generateHash(int position) {
-        // строка на искомой позиции
-        // длина строки на искомой позиции
-        int len = 1;
-        // количество перебранных перестановок до текущей длины
-        int totalCount = 0;
-
-        while (true) {
-            int lenPermutationsCount = (int) Math.pow(base.length(), len);
-            if (totalCount + lenPermutationsCount >= position) {
-                break;
-            }
-            totalCount += lenPermutationsCount;
-            len++;
+    public static String generateLink(int position) {
+        int rem = position;
+        StringBuilder result = new StringBuilder();
+        while (rem != 0) {
+            result.insert(0, base.charAt(rem % base.length()));
+            rem /= base.length();
         }
-
-        char[] current = new char[len];
-        for (int i = 0; i < len; i++) {
-            current[i] = base.charAt(0);
-            for (int j = 0; j < base.length(); j++) {
-                // количество перестановок, начинающеся на данный символ, через которые цикл перескочет
-                int permutationsCount = (int) Math.pow(base.length(), len - (i + 1));
-                current[i] = base.charAt(j);
-                if (totalCount + permutationsCount >= position) {
-                    break;
-                }
-                totalCount += permutationsCount;
-            }
-        }
-
-        return String.valueOf(current);
+        return result.toString();
     }
 
-    public void getFullLink(String link) {
-        System.out.println(db.getOrDefault(link, "unknown link"));
+    public static String getFullLink(String link) {
+        return db.getOrDefault(link, "unknown link");
     }
 }
