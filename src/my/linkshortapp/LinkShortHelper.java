@@ -1,31 +1,55 @@
 package my.linkshortapp;
 
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
 public class LinkShortHelper {
-    private static final Map<String, String> db = new HashMap<>();
+    private static final Map<String, String> shortLinkMap = new HashMap<>();
+    private static final Map<String, String> fullLinkMap = new HashMap<>();
     private static final String base = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 
-    public static String shortenLink(String link) {
-        String shortLink = "http://foo.bar/" + generateLink(db.size() + 1);
+    public String shortenLink(String link) throws Exception {
 
-        db.put(shortLink, link);
+        if (fullLinkMap.containsKey(link)) {
+            return fullLinkMap.get(link);
+        }
+
+        if (!checkLink(link)) {
+            throw new IOException("URL is invalid");
+        }
+
+        String shortLink = "http://foo.bar/" + generateLink(shortLinkMap.size() + 1);
+
+        shortLinkMap.put(shortLink, link);
+        fullLinkMap.put(link, shortLink);
 
         return shortLink;
     }
 
-    public static String generateLink(int position) {
-        int rem = position;
+    private String generateLink(int position) {
         StringBuilder result = new StringBuilder();
-        while (rem != 0) {
-            result.insert(0, base.charAt(rem % base.length()));
-            rem /= base.length();
+        while (position != 0) {
+            result.append(base.charAt(position % base.length()));
+            position /= base.length();
         }
-        return result.toString();
+        return result.reverse().toString();
     }
 
-    public static String getFullLink(String link) {
-        return db.getOrDefault(link, "unknown link");
+    public String getFullLink(String link) {
+        return shortLinkMap.getOrDefault(link, "unknown link");
+    }
+
+    private boolean checkLink(String link) {
+        try {
+            URL u = new URL(link);
+            u.toURI();
+        } catch (MalformedURLException | URISyntaxException e) {
+            return false;
+        }
+        return true;
     }
 }

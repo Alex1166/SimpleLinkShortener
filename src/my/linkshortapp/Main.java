@@ -5,20 +5,25 @@ package my.linkshortapp;
 public class Main {
     public static void main(String[] args) {
 
-        while (true) {
-            System.out.println("type 'shorten <URL>' to shorten link");
-            System.out.println("type 'get <URL>' to get full link");
-            System.out.println("type 'exit' to end execution");
+        LinkShortHelper ls = new LinkShortHelper();
+        InputOutputHelper io = new InputOutputHelper();
 
-            String s = System.console().readLine();
+        io.printHelpMessage();
+
+        while (true) {
+            String s = io.readInput();
 
             if (s.equals("exit")) {
                 return;
             } else {
                 if (s.startsWith("shorten ")) {
-                    System.out.println(LinkShortHelper.shortenLink(s.split(" ")[1]));
+                    try {
+                        io.printResult(ls.shortenLink(s.split(" ")[1]));
+                    } catch (Exception e) {
+                        io.printResult(e.getMessage());
+                    }
                 } else if (s.startsWith("get ")) {
-                    System.out.println(LinkShortHelper.getFullLink(s.split(" ")[1]));
+                    io.printResult(ls.getFullLink(s.split(" ")[1]));
                 }
             }
         }
